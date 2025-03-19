@@ -16,7 +16,7 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
     {
         //IInserter inserter = new NormalInserter(sqlConn, myTrans);
         IInserter inserter = new PreparedInserter(sqlConn, myTrans);
-        foreach (string line in File.ReadLines("C:/temp/title.basics (1).tsv").Skip(1).Take(10000))
+        foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(10000))
         {
             counter++;
             string[] splitLine = line.Split("\t");
