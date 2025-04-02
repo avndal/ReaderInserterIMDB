@@ -13,6 +13,7 @@ namespace ReaderInserterIMDB
         private readonly SqlConnection sqlConn;
         private readonly SqlTransaction myTrans;
         private SqlCommand sqlCommInsert;
+        private SqlCommand sqlCommInsertPerson;
 
         public PreparedInserter(SqlConnection sqlConn, SqlTransaction myTrans)
         {
@@ -34,6 +35,16 @@ namespace ReaderInserterIMDB
             sqlCommInsert.Parameters.Add(CreateParameter("EndYear", SqlDbType.SmallInt));
             sqlCommInsert.Parameters.Add(CreateParameter("RuntimeMinutes", SqlDbType.SmallInt));
             sqlCommInsert.Prepare();
+
+            sqlCommInsertPerson = new SqlCommand("INSERT INTO [dbo].[Persons]" +
+                       "([Nconst],[PrimaryName],[BirthYear]" +
+                       ",[DeathYear])" + "VALUES (@Nconst, @PrimaryName, @BirthYear, @DeathYear)", sqlConn, myTrans);
+
+            sqlCommInsertPerson.Parameters.Add(CreateParameter("Nconst", SqlDbType.VarChar, 9));
+            sqlCommInsertPerson.Parameters.Add(CreateParameter("PrimaryName", SqlDbType.VarChar, 100));
+            sqlCommInsertPerson.Parameters.Add(CreateParameter("BirthYear", SqlDbType.SmallInt));
+            sqlCommInsertPerson.Parameters.Add(CreateParameter("DeathYear", SqlDbType.SmallInt));
+            sqlCommInsertPerson.Prepare();
         }
 
         public void InsertTitle(Title newTitle)
@@ -47,6 +58,14 @@ namespace ReaderInserterIMDB
             sqlCommInsert.Parameters["EndYear"].Value = CheckIntNull(newTitle.endYear);
             sqlCommInsert.Parameters["RuntimeMinutes"].Value = CheckIntNull(newTitle.runtimeMinutes);
             sqlCommInsert.ExecuteNonQuery();
+        }
+        public void InsertPerson(Person newPerson)
+        {
+            sqlCommInsertPerson.Parameters["Nconst"].Value = newPerson.Nconst;
+            sqlCommInsertPerson.Parameters["PrimaryName"].Value = newPerson.PrimaryName;
+            sqlCommInsertPerson.Parameters["BirthYear"].Value = CheckIntNull(newPerson.BirthYear);
+            sqlCommInsertPerson.Parameters["DeathYear"].Value = CheckIntNull(newPerson.DeathYear);
+            sqlCommInsertPerson.ExecuteNonQuery();
         }
 
         public static SqlParameter CreateParameter(string parameterName, SqlDbType type, int? size = null)

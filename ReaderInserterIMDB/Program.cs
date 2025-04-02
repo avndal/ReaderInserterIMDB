@@ -64,6 +64,34 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                 }
             }
         }
+        IInserter inserterName = new PreparedInserter(sqlConn, myTrans);
+        foreach (string line in File.ReadLines("C:/temp/name.basics.tsv").Skip(1).Take(10000))
+        {
+            counter++;
+            string[] splitLine = line.Split("\t");
+            if (splitLine.Length != 6)
+            {
+                Console.WriteLine("Linjen har ikke 6 kolonner: " + line);
+            }
+            else
+            {
+                //Console.WriteLine("Indlæst Titletypeid: " + titleTypeId);
+
+                string Nconst = splitLine[0];
+                string primaryName = splitLine[1].Replace("'", "''");
+                string BirthYear = CheckInt(splitLine[2]);
+                string DeathYear = CheckInt(splitLine[3]);
+
+                Person newPerson = new Person()
+                {
+                    Nconst = Nconst,
+                    PrimaryName = primaryName,
+                    BirthYear = BirthYear,
+                    DeathYear = DeathYear,
+                };
+                inserter.InsertPerson(newPerson);
+            }
+        }
     }
     catch (SqlException ex)
     {
