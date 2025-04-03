@@ -2,9 +2,8 @@
 
 namespace ReaderInserterIMDB
 {
-    public interface IInserter
+    public interface IInserter<T>
     {
-        void InsertTitle(Title newTitle);
-        void InsertPerson(Person newPerson);
+        void Insert(T item);
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReaderInserterIMDB
 {
-    public class NormalInserter : IInserter
+    public class NormalInserter
     {
         private readonly SqlConnection sqlConn;
         private readonly SqlTransaction myTrans;

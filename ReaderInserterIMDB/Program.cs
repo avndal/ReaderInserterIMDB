@@ -15,7 +15,7 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
     try
     {
         //IInserter inserter = new NormalInserter(sqlConn, myTrans);
-        IInserter inserter = new PreparedInserter(sqlConn, myTrans);
+        IInserter<Title> insertTitle = new PreparedInserter<Title>(sqlConn, myTrans);
         foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(10000))
         {
             counter++;
@@ -55,7 +55,7 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                         endYear = endYear,
                         runtimeMinutes = runtimeMinutes
                     };
-                    inserter.InsertTitle(newTitle);
+                    insertTitle.Insert(newTitle);
                 }
                 else
                 {
@@ -64,7 +64,7 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                 }
             }
         }
-        IInserter inserterName = new PreparedInserter(sqlConn, myTrans);
+        IInserter<Person> insertPerson = new PersonInserter(sqlConn, myTrans);
         foreach (string line in File.ReadLines("C:/temp/name.basics.tsv").Skip(1).Take(10000))
         {
             counter++;
@@ -89,7 +89,7 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                     BirthYear = BirthYear,
                     DeathYear = DeathYear,
                 };
-                inserter.InsertPerson(newPerson);
+                insertPerson.Insert(newPerson);
             }
         }
     }
