@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ReaderInserterIMDB
 {
-    public class PersonInserter : PreparedInserter<Person>
+    public class PersonInserter : Inserter<Person>
     {
         private SqlCommand sqlCommInsertPerson;
 

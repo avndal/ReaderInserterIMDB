@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace ReaderInserterIMDB
 {
-    public class PreparedInserter<T> : IInserter<T>
+    public class Inserter<T> : IInserter<T>
     {
 
-        public PreparedInserter(SqlConnection sqlConn, SqlTransaction myTrans)
+        public Inserter(SqlConnection sqlConn, SqlTransaction myTrans)
         {
         }
         public void Insert(T item)

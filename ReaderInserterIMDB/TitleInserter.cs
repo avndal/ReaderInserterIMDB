@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ReaderInserterIMDB
 {
-    public class TitleInserter : PreparedInserter<Title>
+    public class TitleInserter : Inserter<Title>
     {
         private SqlCommand sqlCommInsertTitle;
 

@@ -11,11 +11,12 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
 
     SqlTransaction myTrans = sqlConn.BeginTransaction();
     int counter = 0;
+    List<Title> titleList = new List<Title>();
 
     try
     {
         //IInserter inserter = new NormalInserter(sqlConn, myTrans);
-        IInserter<Title> insertTitle = new PreparedInserter<Title>(sqlConn, myTrans);
+        IInserter<Title> insertTitle = new Inserter<Title>(sqlConn, myTrans);
         foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(10000))
         {
             counter++;
@@ -43,6 +44,8 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                     string startYear = CheckInt(splitLine[5]);
                     string endYear = CheckInt(splitLine[6]);
                     string runtimeMinutes = CheckInt(splitLine[7]);
+                    string genre = splitLine[8].Replace("'", "''");
+                    List<String> genres = genre.Split(",").ToList();
 
                     Title newTitle = new Title()
                     {
@@ -53,15 +56,19 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                         isAdult = isAdult,
                         startYear = startYear,
                         endYear = endYear,
-                        runtimeMinutes = runtimeMinutes
+                        runtimeMinutes = runtimeMinutes,
+                        genres = genres
                     };
                     insertTitle.Insert(newTitle);
+                    titleList.Add(newTitle);  //Måske kan man gemme i title_genre uden en list af titles??
                 }
                 else
                 {
                     Console.WriteLine("Kunne ikke få id for titletype: " + titleType);
                     reader.Close();
                 }
+                GenreInserter inserter = new GenreInserter();
+                inserter.InsertGenres(sqlConn, titleList, myTrans);
             }
         }
         IInserter<Person> insertPerson = new PersonInserter(sqlConn, myTrans);

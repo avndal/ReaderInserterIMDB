@@ -16,5 +16,6 @@ namespace ReaderInserterIMDB
         public string startYear { get; set; }
         public string endYear { get; set; }
         public string runtimeMinutes { get; set; }
+        public List<string> genres { get; set; }
     }
 }
