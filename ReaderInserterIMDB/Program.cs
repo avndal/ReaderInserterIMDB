@@ -44,8 +44,8 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                     string startYear = CheckInt(splitLine[5]);
                     string endYear = CheckInt(splitLine[6]);
                     string runtimeMinutes = CheckInt(splitLine[7]);
-                    string genre = splitLine[8].Replace("'", "''");
-                    List<String> genres = genre.Split(",").ToList();
+      //              string genre = splitLine[8].Replace("'", "''");
+                    List<String> genres = splitLine[8].Replace("'", "''").Split(",").ToList();
 
                     Title newTitle = new Title()
                     {

@@ -26,19 +26,19 @@ namespace ReaderInserterIMDB
                 foreach (string genre in genres)
                 {
                     sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Genres] ([Name])" + 
-                        "OUTPUT INSERTED.ID" + 
+                        "OUTPUT INSERTED.ID " + 
                         "VALUES (@Name)", sqlConn, myTrans);
 
-                    sqlCommInsertGenre.Parameters.Add(CreateParameter("Name", SqlDbType.VarChar, 10));
+                    sqlCommInsertGenre.Parameters.Add(CreateParameter("Name", SqlDbType.VarChar, 100));
                     sqlCommInsertGenre.Prepare();
 
-                    sqlCommInsertGenre.Parameters["Name"].Value = title.genres; //Ville måske virke, tjekker om en string er list af string
-                    sqlCommInsertGenre.ExecuteNonQuery();
+                    sqlCommInsertGenre.Parameters["Name"].Value = genre;
+                    sqlCommInsertGenre.ExecuteScalar();
 
                         SqlDataReader reader = sqlCommInsertGenre.ExecuteReader();
                         if (reader.Read())
                         {
-                            int newId = (int)reader["ID"];
+                            int newId = (int)reader["Id"];
                             genreDict.Add(genre, newId);
                         }
                         reader.Close();
@@ -54,6 +54,8 @@ namespace ReaderInserterIMDB
                         sqlCommInsertGenre.Parameters.Add(CreateParameter("GenreID", SqlDbType.Int));
                         sqlCommInsertGenre.Prepare();
 
+                        sqlCommInsertGenre.Parameters["TitleID"].Value = CheckIntNull(myTitle.);
+                        sqlCommInsertGenre.Parameters["GenreID"].Value = CheckIntNull(genreDict[new]);
                         sqlCommInsertGenre.ExecuteNonQuery();
                     }
 
@@ -72,6 +74,18 @@ namespace ReaderInserterIMDB
                 result = new SqlParameter(parameterName, type, (int)size);
             }
             return result;
+        }
+        public static Object CheckIntNull(string input)
+        {
+            if (input == "NULL")
+            {
+                return DBNull.Value;
+            }
+            if (int.TryParse(input, out int result))
+            {
+                return result;
+            }
+            throw new Exception("Ingen int");
         }
     }
 }
