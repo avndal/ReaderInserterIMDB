@@ -11,10 +11,11 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
 
     SqlTransaction myTrans = sqlConn.BeginTransaction();
     int counter = 0;
-    List<Title> titleList = new List<Title>();
 
     try
     {
+        List<Title> titleList = new List<Title>();
+        List<Person> personList = new List<Person>();
         //IInserter inserter = new NormalInserter(sqlConn, myTrans);
         IInserter<Title> insertTitle = new Inserter<Title>(sqlConn, myTrans);
         foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(10000))
@@ -88,6 +89,7 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                 string primaryName = splitLine[1].Replace("'", "''");
                 string BirthYear = CheckInt(splitLine[2]);
                 string DeathYear = CheckInt(splitLine[3]);
+                List<String> professions = splitLine[4].Replace("'", "''").Split(",").ToList();
 
                 Person newPerson = new Person()
                 {
@@ -95,9 +97,13 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                     PrimaryName = primaryName,
                     BirthYear = BirthYear,
                     DeathYear = DeathYear,
+                    Professions = professions
                 };
                 insertPerson.Insert(newPerson);
+                personList.Add(newPerson);
             }
+            ProfessionInserter inserter = new ProfessionInserter();
+            inserter.InsertGenres(sqlConn, personList, myTrans);
         }
     }
     catch (SqlException ex)

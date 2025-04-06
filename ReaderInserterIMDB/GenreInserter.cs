@@ -47,14 +47,14 @@ namespace ReaderInserterIMDB
                 {
                     foreach (string genre in myTitle.genres)
                     {
-                        sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Titles_Genres] ([TitleID], [GenreID])" +
-                        "VALUES (@TitleID, @GenreID)", sqlConn, myTrans);
+                        sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Titles_Genres] ([Tconst], [GenreID])" +
+                        "VALUES (@Tconst, @GenreID)", sqlConn, myTrans);
 
-                        sqlCommInsertGenre.Parameters.Add(CreateParameter("TitleID", SqlDbType.VarChar, 10)); //Vi behøver måske ikke at tjekke for int
+                        sqlCommInsertGenre.Parameters.Add(CreateParameter("Tconst", SqlDbType.VarChar, 10)); //Vi behøver måske ikke at tjekke for int
                         sqlCommInsertGenre.Parameters.Add(CreateParameter("GenreID", SqlDbType.Int));
                         sqlCommInsertGenre.Prepare();
 
-                        sqlCommInsertGenre.Parameters["TitleID"].Value = myTitle.tconst;
+                        sqlCommInsertGenre.Parameters["Tconst"].Value = myTitle.tconst;
                         sqlCommInsertGenre.Parameters["GenreID"].Value = genreDict[genre];
                         sqlCommInsertGenre.ExecuteNonQuery();
                     }
@@ -74,18 +74,6 @@ namespace ReaderInserterIMDB
                 result = new SqlParameter(parameterName, type, (int)size);
             }
             return result;
-        }
-        public static Object CheckIntNull(string input)
-        {
-            if (input == "NULL")
-            {
-                return DBNull.Value;
-            }
-            if (int.TryParse(input, out int result))
-            {
-                return result;
-            }
-            throw new Exception("Ingen int");
         }
     }
 }

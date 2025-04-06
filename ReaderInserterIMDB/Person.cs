@@ -12,5 +12,7 @@ namespace ReaderInserterIMDB
         public string PrimaryName { get; set; }
         public string BirthYear { get; set; }
         public string DeathYear { get; set; }
+        public List<string> Professions { get; set; }
+
     }
 }
