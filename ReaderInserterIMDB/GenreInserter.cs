@@ -47,15 +47,15 @@ namespace ReaderInserterIMDB
                 {
                     foreach (string genre in myTitle.genres)
                     {
-                        sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Titles_Genres] ([TitleID, GenreID])" +
+                        sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Titles_Genres] ([TitleID], [GenreID])" +
                         "VALUES (@TitleID, @GenreID)", sqlConn, myTrans);
 
-                        sqlCommInsertGenre.Parameters.Add(CreateParameter("TitleID", SqlDbType.Int)); //Vi behøver måske ikke at tjekke for int
+                        sqlCommInsertGenre.Parameters.Add(CreateParameter("TitleID", SqlDbType.VarChar, 10)); //Vi behøver måske ikke at tjekke for int
                         sqlCommInsertGenre.Parameters.Add(CreateParameter("GenreID", SqlDbType.Int));
                         sqlCommInsertGenre.Prepare();
 
-                        sqlCommInsertGenre.Parameters["TitleID"].Value = CheckIntNull(myTitle.);
-                        sqlCommInsertGenre.Parameters["GenreID"].Value = CheckIntNull(genreDict[new]);
+                        sqlCommInsertGenre.Parameters["TitleID"].Value = myTitle.tconst;
+                        sqlCommInsertGenre.Parameters["GenreID"].Value = genreDict[genre];
                         sqlCommInsertGenre.ExecuteNonQuery();
                     }
 
