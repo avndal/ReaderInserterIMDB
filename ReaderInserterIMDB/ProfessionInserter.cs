@@ -15,7 +15,7 @@ namespace ReaderInserterIMDB
         public void Insert(SqlConnection sqlConn, List<Person> personList, SqlTransaction myTrans)
         {
 
-            HashSet<string> professions = new HashSet<string>();
+            /* HashSet<string> professions = new HashSet<string>();
             Dictionary<string, int> professionDict = new Dictionary<string, int>();
             foreach (Person person in personList)
             {
@@ -73,7 +73,7 @@ namespace ReaderInserterIMDB
             {
                 result = new SqlParameter(parameterName, type, (int)size);
             }
-            return result;
+            return result;*/
         }
     }
 }

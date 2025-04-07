@@ -11,47 +11,67 @@ namespace ReaderInserterIMDB
 {
     public class PersonInserter
     {
-        private SqlCommand sqlCommInsertPerson;
+        //private SqlCommand sqlCommInsertPerson;
 
-        public PersonInserter(SqlConnection sqlConn, SqlTransaction myTrans)
+        public PersonInserter()
         {
-            sqlCommInsertPerson = new SqlCommand("INSERT INTO [dbo].[Persons]" +
-                       "([Nconst],[PrimaryName],[BirthYear]" +
-                       ",[DeathYear])" + "VALUES (@Nconst, @PrimaryName, @BirthYear, @DeathYear)", sqlConn, myTrans);
 
-            sqlCommInsertPerson.Parameters.Add(CreateParameter("Nconst", SqlDbType.VarChar, 9));
-            sqlCommInsertPerson.Parameters.Add(CreateParameter("PrimaryName", SqlDbType.VarChar, 100));
-            sqlCommInsertPerson.Parameters.Add(CreateParameter("BirthYear", SqlDbType.SmallInt));
-            sqlCommInsertPerson.Parameters.Add(CreateParameter("DeathYear", SqlDbType.SmallInt));
-            sqlCommInsertPerson.Prepare();
         }
 
-        public void Insert(Person newPerson, SqlConnection sqlConn, SqlTransaction myTrans)
+        public void Insert(List<Person> persons, SqlConnection sqlConn)
         {
-            sqlCommInsertPerson.Parameters["Nconst"].Value = newPerson.Nconst;
-            sqlCommInsertPerson.Parameters["PrimaryName"].Value = newPerson.PrimaryName;
-            sqlCommInsertPerson.Parameters["BirthYear"].Value = CheckIntNull(newPerson.BirthYear);
-            sqlCommInsertPerson.Parameters["DeathYear"].Value = CheckIntNull(newPerson.DeathYear);
+            DataTable personTable = new DataTable("Persons");
+            DataTable knownForTable = new DataTable("Persons_Titles");
 
-            sqlCommInsertPerson.ExecuteNonQuery();
+            personTable.Columns.Add("Nconst", typeof(string));
+            personTable.Columns.Add("PrimaryName", typeof(string));
+            personTable.Columns.Add("BirthYear", typeof(int));
+            personTable.Columns.Add("DeathYear", typeof(int));
+            knownForTable.Columns.Add("Nconst", typeof(string));
+            knownForTable.Columns.Add("Tconst", typeof(string));
 
-            foreach (string title in newPerson.KnownForTitles)
+            foreach (Person person in persons)
             {
-                SqlCommand sqlCommInsertKnownFor = new SqlCommand("INSERT INTO [dbo].[Persons_Titles] ([Nconst], [Tconst])" +
-                "VALUES ('" + newPerson.Nconst + "', '" + title + "')", sqlConn, myTrans);
-
-                try
+                DataRow personRow = personTable.NewRow();
+                FillParameter(personRow, "Nconst", person.Nconst);
+                FillParameter(personRow, "PrimaryName", person.PrimaryName);
+                FillParameter(personRow, "BirthYear", person.BirthYear);
+                FillParameter(personRow, "DeathYear", person.DeathYear);
+                personTable.Rows.Add(personRow);
+                foreach (string knownFor in person.KnownForTitles)
                 {
-                    sqlCommInsertKnownFor.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(sqlCommInsertKnownFor.CommandText, ex);
+                    DataRow knownForRow = knownForTable.NewRow();
+                    FillParameter(knownForRow, "Nconst", person.Nconst);
+                    FillParameter(knownForRow, "Tconst", knownFor);
+                    knownForTable.Rows.Add(knownForRow);
                 }
             }
+            SqlBulkCopy bulkPerson = new SqlBulkCopy(sqlConn,
+                SqlBulkCopyOptions.KeepNulls, null);
+            bulkPerson.DestinationTableName = "Persons";
+            bulkPerson.BulkCopyTimeout = 0;
+            bulkPerson.WriteToServer(personTable);
+
+            SqlBulkCopy bulkKnownFor = new SqlBulkCopy(sqlConn,
+                SqlBulkCopyOptions.KeepNulls, null);
+            bulkKnownFor.DestinationTableName = "Persons_Titles";
+            bulkKnownFor.BulkCopyTimeout = 0;
+            bulkKnownFor.WriteToServer(knownForTable);
         }
 
-
+        public void FillParameter(DataRow row,
+            string columnName,
+            object? value)
+        {
+            if (value != null)
+            {
+                row[columnName] = value;
+            }
+            else
+            {
+                row[columnName] = DBNull.Value;
+            }
+        }
         public static SqlParameter CreateParameter(string parameterName, SqlDbType type, int? size = null)
         {
             SqlParameter result = new SqlParameter(parameterName, type);

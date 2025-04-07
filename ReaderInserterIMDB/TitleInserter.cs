@@ -12,36 +12,57 @@ namespace ReaderInserterIMDB
     {
         private SqlCommand sqlCommInsertTitle;
 
-        public TitleInserter(SqlConnection sqlConn, SqlTransaction myTrans)
+        //public TitleInserter(SqlConnection sqlConn, SqlTransaction myTrans)
+        public TitleInserter()
         {
-            sqlCommInsertTitle = new SqlCommand("INSERT INTO [dbo].[Titles]" +
-                       "([Tconst],[TitleTypeId],[PrimaryTitle]" +
-                       ",[OriginalTitle],[IsAdult],[StartYear],[EndYear],[RuntimeMinutes]) " +
-                       "VALUES (@tconst,@titleTypeId,@primaryTitle,@originalTitle," +
-                       "@isAdult,@startYear,@endYear,@runtimeMinutes)", sqlConn, myTrans);
+        }
+        public void Insert(List<Title> titles, SqlConnection sqlConn)
+        {
+            DataTable titleTable = new DataTable("Titles");
 
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("tconst", SqlDbType.VarChar, 10));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("TitleTypeId", SqlDbType.Int));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("PrimaryTitle", SqlDbType.VarChar, 500));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("originalTitle", SqlDbType.VarChar, 500));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("IsAdult", SqlDbType.Bit));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("StartYear", SqlDbType.SmallInt));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("EndYear", SqlDbType.SmallInt));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("RuntimeMinutes", SqlDbType.Int));
-            sqlCommInsertTitle.Prepare();
+            titleTable.Columns.Add("tconst", typeof(string));
+            titleTable.Columns.Add("titleType", typeof(string));
+            titleTable.Columns.Add("primaryTitle", typeof(string));
+            titleTable.Columns.Add("originalTitle", typeof(string));
+            titleTable.Columns.Add("isAdult", typeof(bool));
+            titleTable.Columns.Add("startYear", typeof(int));
+            titleTable.Columns.Add("endYear", typeof(int));
+            titleTable.Columns.Add("runtimeMinutes", typeof(int));
+
+            foreach (Title title in titles)
+            {
+                DataRow titleRow = titleTable.NewRow();
+                FillParameter(titleRow, "tconst", title.tconst);
+                FillParameter(titleRow, "titleType", title.titleTypeId);
+                FillParameter(titleRow, "primaryTitle", title.primaryTitle);
+                FillParameter(titleRow, "originalTitle", title.originalTitle);
+                FillParameter(titleRow, "isAdult", title.isAdult);
+                FillParameter(titleRow, "startYear", title.startYear);
+                FillParameter(titleRow, "endYear", title.endYear);
+                FillParameter(titleRow, "runtimeMinutes", title.runtimeMinutes);
+                titleTable.Rows.Add(titleRow);
+            }
+            SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn,
+                SqlBulkCopyOptions.KeepNulls, null);
+            bulkCopy.DestinationTableName = "Titles";
+            bulkCopy.BulkCopyTimeout = 0;
+            bulkCopy.WriteToServer(titleTable);
         }
-        public void Insert(Title newTitle)
+
+        public void FillParameter(DataRow row,
+            string columnName,
+            object? value)
         {
-            sqlCommInsertTitle.Parameters["tconst"].Value = newTitle.tconst;
-            sqlCommInsertTitle.Parameters["TitleTypeId"].Value = newTitle.titleTypeId;
-            sqlCommInsertTitle.Parameters["PrimaryTitle"].Value = newTitle.primaryTitle;
-            sqlCommInsertTitle.Parameters["originalTitle"].Value = newTitle.originalTitle;
-            sqlCommInsertTitle.Parameters["IsAdult"].Value = CheckBoolNull(newTitle.isAdult);
-            sqlCommInsertTitle.Parameters["StartYear"].Value = CheckIntNull(newTitle.startYear);
-            sqlCommInsertTitle.Parameters["EndYear"].Value = CheckIntNull(newTitle.endYear);
-            sqlCommInsertTitle.Parameters["RuntimeMinutes"].Value = CheckIntNull(newTitle.runtimeMinutes);
-            sqlCommInsertTitle.ExecuteNonQuery();
+            if (value != null)
+            {
+                row[columnName] = value;
+            }
+            else
+            {
+                row[columnName] = DBNull.Value;
+            }
         }
+
         public static SqlParameter CreateParameter(string parameterName, SqlDbType type, int? size = null)
         {
             SqlParameter result = new SqlParameter(parameterName, type);
