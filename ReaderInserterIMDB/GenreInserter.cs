@@ -23,43 +23,50 @@ namespace ReaderInserterIMDB
                 {
                     genres.Add(genre);
                 }
-                foreach (string genre in genres)
+            }
+            foreach (string genre in genres)
+            {
+                sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Genres] ([Name])" +
+                    "OUTPUT INSERTED.ID " +
+                    "VALUES (@Name)", sqlConn, myTrans);
+
+                sqlCommInsertGenre.Parameters.Add(CreateParameter("Name", SqlDbType.VarChar, 100));
+                sqlCommInsertGenre.Prepare();
+
+                sqlCommInsertGenre.Parameters["Name"].Value = genre;
+                sqlCommInsertGenre.ExecuteScalar();
+
+                SqlDataReader reader = sqlCommInsertGenre.ExecuteReader();
+                if (reader.Read())
                 {
-                    sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Genres] ([Name])" + 
-                        "OUTPUT INSERTED.ID " + 
-                        "VALUES (@Name)", sqlConn, myTrans);
-
-                    sqlCommInsertGenre.Parameters.Add(CreateParameter("Name", SqlDbType.VarChar, 100));
-                    sqlCommInsertGenre.Prepare();
-
-                    sqlCommInsertGenre.Parameters["Name"].Value = genre;
-                    sqlCommInsertGenre.ExecuteScalar();
-
-                        SqlDataReader reader = sqlCommInsertGenre.ExecuteReader();
-                        if (reader.Read())
-                        {
-                            int newId = (int)reader["Id"];
-                            genreDict.Add(genre, newId);
-                        }
-                        reader.Close();
+                    int newId = (int)reader["Id"];
+                    genreDict.Add(genre, newId);
                 }
-                foreach (Title myTitle in titleList)
+                reader.Close();
+            }
+            foreach (Title myTitle in titleList)
+            {
+                foreach (string genre in myTitle.genres)
                 {
-                    foreach (string genre in myTitle.genres)
+                    sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Titles_Genres] ([Tconst], [GenreID])" +
+                    "VALUES ('" + myTitle.tconst + "', '" + genreDict[genre] + "')", sqlConn, myTrans);
+
+                    sqlCommInsertGenre.Parameters.Add(CreateParameter("Tconst", SqlDbType.VarChar, 10)); //Vi behøver måske ikke at tjekke for int
+                    sqlCommInsertGenre.Parameters.Add(CreateParameter("GenreID", SqlDbType.Int));
+                    sqlCommInsertGenre.Prepare();
+                    
+                    sqlCommInsertGenre.Parameters["Tconst"].Value = myTitle.tconst;
+                    sqlCommInsertGenre.Parameters["GenreID"].Value = genreDict[genre];
+                    try
                     {
-                        sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Titles_Genres] ([Tconst], [GenreID])" +
-                        "VALUES (@Tconst, @GenreID)", sqlConn, myTrans);
-
-                        sqlCommInsertGenre.Parameters.Add(CreateParameter("Tconst", SqlDbType.VarChar, 10)); //Vi behøver måske ikke at tjekke for int
-                        sqlCommInsertGenre.Parameters.Add(CreateParameter("GenreID", SqlDbType.Int));
-                        sqlCommInsertGenre.Prepare();
-
-                        sqlCommInsertGenre.Parameters["Tconst"].Value = myTitle.tconst;
-                        sqlCommInsertGenre.Parameters["GenreID"].Value = genreDict[genre];
                         sqlCommInsertGenre.ExecuteNonQuery();
                     }
-
+                    catch (Exception ex)
+                    {
+                        throw new Exception(sqlCommInsertGenre.CommandText, ex);
+                    }
                 }
+
             }
         }
         public static SqlParameter CreateParameter(string parameterName, SqlDbType type, int? size = null)

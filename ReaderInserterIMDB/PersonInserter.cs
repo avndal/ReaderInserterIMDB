@@ -9,15 +9,12 @@ using System.Threading.Tasks;
 
 namespace ReaderInserterIMDB
 {
-    public class PersonInserter : Inserter<Person>
+    public class PersonInserter
     {
         private SqlCommand sqlCommInsertPerson;
 
-        public PersonInserter(SqlConnection sqlConn, SqlTransaction myTrans) : base(sqlConn, myTrans)  
+        public PersonInserter(SqlConnection sqlConn, SqlTransaction myTrans)
         {
-            sqlConn = sqlConn;
-            myTrans = myTrans;
-
             sqlCommInsertPerson = new SqlCommand("INSERT INTO [dbo].[Persons]" +
                        "([Nconst],[PrimaryName],[BirthYear]" +
                        ",[DeathYear])" + "VALUES (@Nconst, @PrimaryName, @BirthYear, @DeathYear)", sqlConn, myTrans);
@@ -29,13 +26,29 @@ namespace ReaderInserterIMDB
             sqlCommInsertPerson.Prepare();
         }
 
-        public void Insert(Person newPerson)
+        public void Insert(Person newPerson, SqlConnection sqlConn, SqlTransaction myTrans)
         {
             sqlCommInsertPerson.Parameters["Nconst"].Value = newPerson.Nconst;
             sqlCommInsertPerson.Parameters["PrimaryName"].Value = newPerson.PrimaryName;
             sqlCommInsertPerson.Parameters["BirthYear"].Value = CheckIntNull(newPerson.BirthYear);
             sqlCommInsertPerson.Parameters["DeathYear"].Value = CheckIntNull(newPerson.DeathYear);
+
             sqlCommInsertPerson.ExecuteNonQuery();
+
+            foreach (string title in newPerson.KnownForTitles)
+            {
+                SqlCommand sqlCommInsertKnownFor = new SqlCommand("INSERT INTO [dbo].[Persons_Titles] ([Nconst], [Tconst])" +
+                "VALUES ('" + newPerson.Nconst + "', '" + title + "')", sqlConn, myTrans);
+
+                try
+                {
+                    sqlCommInsertKnownFor.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(sqlCommInsertKnownFor.CommandText, ex);
+                }
+            }
         }
 
 
@@ -52,24 +65,6 @@ namespace ReaderInserterIMDB
             }
             return result;
         }
-
-        public static Object CheckBoolNull(string input)
-        {
-            if (input == "NULL")
-            {
-                return DBNull.Value;
-            }
-            if (input == "1")
-            {
-                return true;
-            }
-            else if (input == "0")
-            {
-                return false;
-            }
-            throw new Exception("Ingen bool");
-        }
-
         public static Object CheckIntNull(string input)
         {
             if (input == "NULL")

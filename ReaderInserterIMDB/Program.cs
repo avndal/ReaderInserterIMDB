@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using ReaderInserterIMDB;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB;" +
                "Integrated security=True;TrustServerCertificate=True"))
@@ -16,9 +18,11 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
     {
         List<Title> titleList = new List<Title>();
         List<Person> personList = new List<Person>();
+        
         //IInserter inserter = new NormalInserter(sqlConn, myTrans);
-        IInserter<Title> insertTitle = new Inserter<Title>(sqlConn, myTrans);
-        foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(10000))
+        TitleInserter insertTitle = new TitleInserter(sqlConn, myTrans);
+        foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(117057))
+        //foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(11705700))
         {
             counter++;
             string[] splitLine = line.Split("\t");
@@ -29,7 +33,7 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
             else
             {
                 string titleType = splitLine[1];
-                SqlCommand sqlComm = new SqlCommand("EXEC [dbo].[TitleTypeGetInsertID] @NewTiteType = '"
+                SqlCommand sqlComm = new SqlCommand("EXEC [dbo].[TitleTypeGetInsertID] @NewTitleType = '"
                     + titleType + "'", sqlConn, myTrans);
                 SqlDataReader reader = sqlComm.ExecuteReader();
                 if (reader.Read())
@@ -61,7 +65,7 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                         genres = genres
                     };
                     insertTitle.Insert(newTitle);
-                    titleList.Add(newTitle);  //Måske kan man gemme i title_genre uden en list af titles??
+                    titleList.Add(newTitle);
                 }
                 else
                 {
@@ -69,11 +73,11 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                     reader.Close();
                 }
                 GenreInserter inserter = new GenreInserter();
-                inserter.InsertGenres(sqlConn, titleList, myTrans);
+                //inserter.InsertGenres(sqlConn, titleList, myTrans);
             }
         }
-        IInserter<Person> insertPerson = new PersonInserter(sqlConn, myTrans);
-        foreach (string line in File.ReadLines("C:/temp/name.basics.tsv").Skip(1).Take(10000))
+        /*PersonInserter insertPerson = new PersonInserter(sqlConn, myTrans);
+        foreach (string line in File.ReadLines("C:/temp/name.basics.tsv").Skip(1).Take(10))
         {
             counter++;
             string[] splitLine = line.Split("\t");
@@ -90,6 +94,7 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                 string BirthYear = CheckInt(splitLine[2]);
                 string DeathYear = CheckInt(splitLine[3]);
                 List<String> professions = splitLine[4].Replace("'", "''").Split(",").ToList();
+                List<String> knownForTitles = splitLine[5].Replace("'", "''").Split(",").ToList();
 
                 Person newPerson = new Person()
                 {
@@ -97,13 +102,45 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                     PrimaryName = primaryName,
                     BirthYear = BirthYear,
                     DeathYear = DeathYear,
-                    Professions = professions
+                    Professions = professions,
+                    KnownForTitles = knownForTitles
                 };
-                insertPerson.Insert(newPerson);
+                insertPerson.Insert(newPerson, sqlConn, myTrans);
                 personList.Add(newPerson);
             }
-            ProfessionInserter inserter = new ProfessionInserter();
-            inserter.InsertGenres(sqlConn, personList, myTrans);
+            ProfessionInserter professionInserter = new ProfessionInserter();
+            //professionInserter.Insert(sqlConn, personList, myTrans);
+        }*/
+        /*foreach (string line in File.ReadLines("C:/temp/title.crew.tsv").Skip(1).Take(10))
+        {
+            string[] splitLine = line.Split("\t");
+            if (splitLine.Length != 3)
+            {
+                Console.WriteLine("Linjen har ikke 6 kolonner: " + line);
+            }
+            else
+            {
+                string Tconst = splitLine[0].Replace("'", "''");
+                List<String> directors = splitLine[1].Replace("'", "''").Split(",").ToList();
+                List<String> writers = splitLine[2].Replace("'", "''").Split(",").ToList();
+
+                foreach (string director in directors)
+                {
+                    SqlCommand sqlCommInsertDirector = new SqlCommand("INSERT INTO [dbo].[Directors] ([Nconst], [Tconst])" +
+                "VALUES ('" + Tconst + "', '" + director + "')", sqlConn, myTrans);
+                    sqlCommInsertDirector.ExecuteNonQuery();
+                }
+                foreach (string writer in writers)
+                {
+                    SqlCommand sqlCommInsertWriter = new SqlCommand("INSERT INTO [dbo].[Writers] ([Nconst], [Tconst])" +
+                "VALUES ('" + Tconst + "', '" + writer + "')", sqlConn, myTrans);
+                    sqlCommInsertWriter.ExecuteNonQuery();
+                }
+            }
+        }*/
+        foreach (string line in File.ReadLines("C:/temp/title.principals.tsv").Skip(1).Take(100))
+        {
+
         }
     }
     catch (SqlException ex)

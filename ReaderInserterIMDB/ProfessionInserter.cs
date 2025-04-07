@@ -12,7 +12,7 @@ namespace ReaderInserterIMDB
     {
         private SqlCommand sqlCommInsertGenre;
 
-        public void InsertGenres(SqlConnection sqlConn, List<Person> personList, SqlTransaction myTrans)
+        public void Insert(SqlConnection sqlConn, List<Person> personList, SqlTransaction myTrans)
         {
 
             HashSet<string> professions = new HashSet<string>();
@@ -23,43 +23,43 @@ namespace ReaderInserterIMDB
                 {
                     professions.Add(profession);
                 }
-                foreach (string profession in professions)
-                {
-                    sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Professions] ([Name])" +
-                        "OUTPUT INSERTED.ID " +
-                        "VALUES (@Name)", sqlConn, myTrans);
+            }
+            foreach (string profession in professions)
+            {
+                sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Professions] ([Professions])" +
+                    "OUTPUT INSERTED.ID " +
+                    "VALUES (@Professions)", sqlConn, myTrans);
 
-                    sqlCommInsertGenre.Parameters.Add(CreateParameter("Name", SqlDbType.VarChar, 100));
+                sqlCommInsertGenre.Parameters.Add(CreateParameter("Professions", SqlDbType.VarChar, 100));
+                sqlCommInsertGenre.Prepare();
+
+                sqlCommInsertGenre.Parameters["Professions"].Value = profession;
+                sqlCommInsertGenre.ExecuteScalar();
+
+                SqlDataReader reader = sqlCommInsertGenre.ExecuteReader();
+                if (reader.Read())
+                {
+                    int newId = (int)reader["Id"];
+                    professionDict.Add(profession, newId);
+                }
+                reader.Close();
+            }
+            foreach (Person myPerson in personList)
+            {
+                foreach (string profession in myPerson.Professions)
+                {
+                    sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Persons_Professions] ([Nconst], [ProfessionID])" +
+                    "VALUES (@Nconst, @ProfessionID)", sqlConn, myTrans);
+
+                    sqlCommInsertGenre.Parameters.Add(CreateParameter("Nconst", SqlDbType.VarChar, 10));
+                    sqlCommInsertGenre.Parameters.Add(CreateParameter("ProfessionID", SqlDbType.Int));
                     sqlCommInsertGenre.Prepare();
 
-                    sqlCommInsertGenre.Parameters["Name"].Value = profession;
-                    sqlCommInsertGenre.ExecuteScalar();
-
-                    SqlDataReader reader = sqlCommInsertGenre.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        int newId = (int)reader["Id"];
-                        professionDict.Add(profession, newId);
-                    }
-                    reader.Close();
+                    sqlCommInsertGenre.Parameters["Nconst"].Value = myPerson.Nconst;
+                    sqlCommInsertGenre.Parameters["ProfessionID"].Value = professionDict[profession];
+                    sqlCommInsertGenre.ExecuteNonQuery();
                 }
-                foreach (Person myPerson in personList)
-                {
-                    foreach (string profession in myPerson.Professions)
-                    {
-                        sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Persons_Professions] ([Nconst], [GenreID])" +
-                        "VALUES (@Nconst, @GenreID)", sqlConn, myTrans);
 
-                        sqlCommInsertGenre.Parameters.Add(CreateParameter("Nconst", SqlDbType.VarChar, 10)); //Vi behøver måske ikke at tjekke for int
-                        sqlCommInsertGenre.Parameters.Add(CreateParameter("GenreID", SqlDbType.Int));
-                        sqlCommInsertGenre.Prepare();
-
-                        sqlCommInsertGenre.Parameters["Nconst"].Value = myPerson.Nconst;
-                        sqlCommInsertGenre.Parameters["GenreID"].Value = professionDict[profession];
-                        sqlCommInsertGenre.ExecuteNonQuery();
-                    }
-
-                }
             }
         }
         public static SqlParameter CreateParameter(string parameterName, SqlDbType type, int? size = null)

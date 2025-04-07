@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ReaderInserterIMDB
 {
     public class Profession
-    {
-        public required string Name { get; set; }
+    {       
+        public string Name { get; set; }
     }
 }
