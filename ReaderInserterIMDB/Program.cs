@@ -22,8 +22,8 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
         //IInserter inserter = new NormalInserter(sqlConn, myTrans);
         TitleInserter insertTitle = new TitleInserter(sqlConn, myTrans);
         //foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(117057))
-        //foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1))
-        foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(10))
+        foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1))
+        //foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(10))
         {
             counter++;
             string[] splitLine = line.Split("\t");
@@ -74,11 +74,11 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                     reader.Close();
                 }
                 GenreInserter inserter = new GenreInserter();
-                //inserter.InsertGenres(sqlConn, titleList, myTrans);
+                inserter.InsertGenres(sqlConn, titleList, myTrans);
             }
         }
-        /*PersonInserter insertPerson = new PersonInserter(sqlConn, myTrans);
-        foreach (string line in File.ReadLines("C:/temp/name.basics.tsv").Skip(1).Take(10))
+        PersonInserter insertPerson = new PersonInserter(sqlConn, myTrans);
+        foreach (string line in File.ReadLines("C:/temp/name.basics.tsv").Skip(1))
         {
             counter++;
             string[] splitLine = line.Split("\t");
@@ -110,9 +110,9 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                 personList.Add(newPerson);
             }
             ProfessionInserter professionInserter = new ProfessionInserter();
-            //professionInserter.Insert(sqlConn, personList, myTrans);
-        }*/
-        /*foreach (string line in File.ReadLines("C:/temp/title.crew.tsv").Skip(1).Take(10))
+            professionInserter.Insert(sqlConn, personList, myTrans);
+        }
+        foreach (string line in File.ReadLines("C:/temp/title.crew.tsv").Skip(1))
         {
             string[] splitLine = line.Split("\t");
             if (splitLine.Length != 3)
@@ -138,10 +138,10 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                     sqlCommInsertWriter.ExecuteNonQuery();
                 }
             }
-        }*/
+        }
         AlternativeTitleInserter altInserter = new AlternativeTitleInserter(sqlConn, myTrans);
 
-        foreach (string line in File.ReadLines("C:/temp/title.akas.tsv").Skip(1).Take(100))
+        foreach (string line in File.ReadLines("C:/temp/title.akas.tsv").Skip(1))
         {
             string[] splitLine = line.Split("\t");
             if (splitLine.Length != 8)
@@ -177,11 +177,12 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
     catch (SqlException ex)
     {
         Console.WriteLine("linje nummer: " + counter + "\r\n" + ex.ToString());
+        myTrans.Rollback();
     }
     stopwatch.Stop();
     Console.WriteLine("Elapsed milli: " + stopwatch.ElapsedMilliseconds);
 
-    myTrans.Rollback();
+    myTrans.Commit();
 }
 
 string CheckBit(string bit)
