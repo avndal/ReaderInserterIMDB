@@ -21,8 +21,9 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
         
         //IInserter inserter = new NormalInserter(sqlConn, myTrans);
         TitleInserter insertTitle = new TitleInserter(sqlConn, myTrans);
-        foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(117057))
-        //foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(11705700))
+        //foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(117057))
+        //foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1))
+        foreach (string line in File.ReadLines("C:/temp/title.basics.tsv").Skip(1).Take(10))
         {
             counter++;
             string[] splitLine = line.Split("\t");
@@ -138,9 +139,39 @@ using (SqlConnection sqlConn = new SqlConnection("server=localhost;Database=IMDB
                 }
             }
         }*/
-        foreach (string line in File.ReadLines("C:/temp/title.principals.tsv").Skip(1).Take(100))
-        {
+        AlternativeTitleInserter altInserter = new AlternativeTitleInserter(sqlConn, myTrans);
 
+        foreach (string line in File.ReadLines("C:/temp/title.akas.tsv").Skip(1).Take(100))
+        {
+            string[] splitLine = line.Split("\t");
+            if (splitLine.Length != 8)
+            {
+                Console.WriteLine("Linjen har ikke 6 kolonner: " + line);
+            }
+            else
+            {
+                string Tconst = splitLine[0].Replace("'", "''");
+                string ordering = CheckInt(splitLine[1]);
+                string title = splitLine[2].Replace("'", "''");
+                string Region = splitLine[3].Replace("'", "''");
+                string Language = splitLine[4].Replace("'", "''");
+                string Attributes = splitLine[5].Replace("'", "''");
+                string Type = splitLine[6].Replace("'", "''");
+                string IsOriginalTitle = CheckBit(splitLine[7]);
+
+                AlternativeTitle newTitle = new AlternativeTitle()
+                {
+                    Tconst = Tconst,
+                    Ordering = ordering,
+                    Title = title,
+                    Region = Region,
+                    Language = Language,
+                    Attributes = Attributes,
+                    Type = Type,
+                    IsOriginalTitle = IsOriginalTitle
+                };
+                altInserter.Insert(newTitle);
+            }
         }
     }
     catch (SqlException ex)

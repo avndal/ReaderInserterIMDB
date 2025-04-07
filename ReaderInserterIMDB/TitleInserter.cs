@@ -22,12 +22,12 @@ namespace ReaderInserterIMDB
 
             sqlCommInsertTitle.Parameters.Add(CreateParameter("tconst", SqlDbType.VarChar, 10));
             sqlCommInsertTitle.Parameters.Add(CreateParameter("TitleTypeId", SqlDbType.Int));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("PrimaryTitle", SqlDbType.VarChar, -1));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("originalTitle", SqlDbType.VarChar, -1));
+            sqlCommInsertTitle.Parameters.Add(CreateParameter("PrimaryTitle", SqlDbType.VarChar, 500));
+            sqlCommInsertTitle.Parameters.Add(CreateParameter("originalTitle", SqlDbType.VarChar, 500));
             sqlCommInsertTitle.Parameters.Add(CreateParameter("IsAdult", SqlDbType.Bit));
             sqlCommInsertTitle.Parameters.Add(CreateParameter("StartYear", SqlDbType.SmallInt));
             sqlCommInsertTitle.Parameters.Add(CreateParameter("EndYear", SqlDbType.SmallInt));
-            sqlCommInsertTitle.Parameters.Add(CreateParameter("RuntimeMinutes", SqlDbType.SmallInt));
+            sqlCommInsertTitle.Parameters.Add(CreateParameter("RuntimeMinutes", SqlDbType.Int));
             sqlCommInsertTitle.Prepare();
         }
         public void Insert(Title newTitle)
