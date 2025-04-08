@@ -104,7 +104,45 @@ titlesList.Add(titlesRest);
     }
 }*/
 
+
+
 /*foreach (string line in
+    System.IO.File.ReadLines
+    (@"C:/temp/title.crew.tsv")
+    .Skip(1).Take(1))
+{
+    string[] values = line.Split("\t");
+    if (values.Length == 3)
+    {
+        List<string?> directors = new List<string?>();
+        List<string?> writers = new List<string?>();
+
+        if (values[1] != "\\N")
+        {
+            foreach (string? director in values[1].Split(","))
+            {
+                directors.Add(director);
+            }
+        }
+        if (values[2] != "\\N")
+        {
+            foreach (string? writer in values[2].Split(","))
+            {
+                writers.Add(CheckNull(writer));
+            }
+        }
+
+        directorList.Add(new Director(values[0], directors));
+        writerList.Add(new Writer(values[0], writers));
+    }
+}*/
+
+
+
+
+/*
+
+foreach (string line in
     System.IO.File.ReadLines
     (@"C:/temp/title.crew.tsv")
     .Skip(1).Take(1))
@@ -133,8 +171,8 @@ titlesList.Add(titlesRest);
         directorList.Add(new Director(values[0], directors));
         writerList.Add(new Writer(values[0], writers));
     }
-}*/
-
+}
+*/
 
 DateTime before = DateTime.Now;
 
@@ -148,7 +186,8 @@ GenreInserter genreInserter = new GenreInserter();
     Console.WriteLine($"Adds {titles.Count}, titles");
     titleInserter.Insert(titles, sqlConn);
 }*/
-/*for (int i = 0; i < 115; i++)
+//for (int i = 0; i < 115; i++)
+for (int i = 0; i < 10; i++)
 {
     List<Title> titles = new List<Title>();
     foreach (string line in
@@ -163,7 +202,7 @@ GenreInserter genreInserter = new GenreInserter();
             SqlCommand sqlComm = new SqlCommand("EXEC [dbo].[TitleTypeGetInsertID] @NewTitleType = '"
                         + titleType + "'");*/
 
-            /*titles.Add(new Title(
+            titles.Add(new Title(
                 values[0], values[1], values[2], values[3],
                 ConvertToBool(values[4]), ConvertToInt(values[5]),
                 ConvertToInt(values[6]), ConvertToInt(values[7]),
@@ -175,7 +214,7 @@ GenreInserter genreInserter = new GenreInserter();
     titleInserter.Insert(titles, sqlConn);
     //Console.WriteLine("Adds, genres");
     //genreInserter.InsertGenres(sqlConn, titles);
-}*/
+}
 
 /*PersonInserter? personInserter = new PersonInserter();
 for (int i = 0; i < 150; i++)
@@ -216,7 +255,8 @@ personInserter.Insert(persons2, sqlConn);*/
 
 AlternativeTitleInserter altInserter = new AlternativeTitleInserter();
 
-for (int i = 0; i < 581; i++)
+//for (int i = 0; i < 581; i++)
+for (int i = 0; i < 10; i++)
 {
     List<AlternativeTitle> altTitles = new List<AlternativeTitle>();
     foreach (string line in
