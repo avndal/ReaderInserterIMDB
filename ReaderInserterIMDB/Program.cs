@@ -9,11 +9,11 @@ using System.Runtime.CompilerServices;
 string ConnString = "server=localhost;Database=IMDB;" +
                "Integrated security=True;TrustServerCertificate=True";
 
-//List<List<Title>> titlesList = new List<List<Title>>();
-//List<Person> persons = new List<Person>();
-//List<Person> persons2 = new List<Person>();
-//List<KnownForTitle> knownForTitles = new List<KnownForTitle>();
-List<DirectorWriter> directorWriters = new List<DirectorWriter>();
+List<List<Title>> titlesList = new List<List<Title>>();
+List<Person> persons = new List<Person>();
+List<Person> persons2 = new List<Person>();
+List<Director> directorList = new List<Director>();
+List<Writer> writerList = new List<Writer>();
 
 /*for (int i = 0; i < 23; i++)
 {
@@ -61,10 +61,10 @@ foreach (string line in
             ));
     }
 }
-titlesList.Add(titlesRest);*/
+titlesList.Add(titlesRest);
 
 
-/*foreach (string line in
+foreach (string line in
     System.IO.File.ReadLines
     (@"C:/temp/name.basics.tsv")
     .Skip(1).Take(7000000))
@@ -111,35 +111,28 @@ foreach (string line in
         List<string?> directors = new List<string?>();
         List<string?> writers = new List<string?>();
 
-        if (values[1] == "\\N")
-        {
-            directors = null;
-        }
-        else
+        if (values[1] != "\\N")
         {
             foreach (string? director in values[1].Split(","))
             {
-                directors.Add(CheckNull(director));
+                directors.Add(director);
             }
         }
-        if (values[2] == "\\N")
-        {
-            writers = null;
-        }
-        else
+        if (values[2] != "\\N")
         {
             foreach (string? writer in values[2].Split(","))
-            {
+            { 
                 writers.Add(CheckNull(writer));
             }
         }
 
-        directorWriters.Add(new DirectorWriter(values[0], directors, writers));
+        directorList.Add(new Director(values[0], directors));
+        writerList.Add(new Writer(values[0], writers));
     }
 }
 
 
-    DateTime before = DateTime.Now;
+DateTime before = DateTime.Now;
 
 SqlConnection sqlConn = new SqlConnection(ConnString);
 sqlConn.Open();
@@ -149,19 +142,19 @@ foreach (List<Title> titles in titlesList)
 {
     Console.WriteLine($"Adds {titles.Count}, titles");
     titleInserter.Insert(titles, sqlConn);
-}*/
+}
 
 
-/*Console.WriteLine($"Adds {persons.Count}, people");
+Console.WriteLine($"Adds {persons.Count}, people");
 PersonInserter? personInserter = new PersonInserter();
 personInserter.Insert(persons, sqlConn);
 
 Console.WriteLine($"Adds {persons2.Count}, people");
 personInserter.Insert(persons2, sqlConn);*/
 
-Console.WriteLine($"Adds {directorWriters.Count}, DirectorsWriters");
+Console.WriteLine($"Adds {directorList.Count}, DirectorsWriters");
 DirectorWriterInserter directorWriterInserter = new DirectorWriterInserter();
-directorWriterInserter.Insert(directorWriters, sqlConn);
+directorWriterInserter.Insert(directorList, writerList, sqlConn);
 
 sqlConn.Close();
 

@@ -16,7 +16,7 @@ namespace ReaderInserterIMDB
 
         public AlternativeTitleInserter(SqlConnection sqlConn, SqlTransaction myTrans)
         {
-            sqlCommInsertAlternativeTitle = new SqlCommand("INSERT INTO [dbo].[Alternative_Titles] ([Tconst], " +
+            /*sqlCommInsertAlternativeTitle = new SqlCommand("INSERT INTO [dbo].[Alternative_Titles] ([Tconst], " +
                 "[Ordering], [Title], [Region], [Language], [Attributes], [Type], [IsOriginalTitle])" +
             "VALUES (@Tconst,@Ordering,@Title,@Region,@Language,@Attributes,@Type,@IsOriginalTitle)", sqlConn, myTrans);
 
@@ -28,11 +28,11 @@ namespace ReaderInserterIMDB
             sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Attributes", SqlDbType.VarChar, 100));
             sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Type", SqlDbType.VarChar, 100));
             sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("IsOriginalTitle", SqlDbType.Bit));
-            sqlCommInsertAlternativeTitle.Prepare();
+            sqlCommInsertAlternativeTitle.Prepare();*/
         }
         public void Insert(AlternativeTitle alternativeTitle)
         {
-            sqlCommInsertAlternativeTitle.Parameters["Tconst"].Value = alternativeTitle.Tconst;
+            /*sqlCommInsertAlternativeTitle.Parameters["Tconst"].Value = alternativeTitle.Tconst;
             sqlCommInsertAlternativeTitle.Parameters["Ordering"].Value = CheckIntNull(alternativeTitle.Ordering);
             sqlCommInsertAlternativeTitle.Parameters["Title"].Value = alternativeTitle.Title;
             sqlCommInsertAlternativeTitle.Parameters["Region"].Value = alternativeTitle.Region;
@@ -40,7 +40,7 @@ namespace ReaderInserterIMDB
             sqlCommInsertAlternativeTitle.Parameters["Attributes"].Value = alternativeTitle.Attributes;
             sqlCommInsertAlternativeTitle.Parameters["Type"].Value = alternativeTitle.Type;
             sqlCommInsertAlternativeTitle.Parameters["IsOriginalTitle"].Value = CheckBoolNull(alternativeTitle.IsOriginalTitle);
-            sqlCommInsertAlternativeTitle.ExecuteNonQuery();
+            sqlCommInsertAlternativeTitle.ExecuteNonQuery();*/
         }
         public static SqlParameter CreateParameter(string parameterName, SqlDbType type, int? size = null)
         {

@@ -14,7 +14,7 @@ namespace ReaderInserterIMDB
         {
             
         }
-        public void Insert(List<DirectorWriter> directorWriters, SqlConnection sqlConn)
+        public void Insert(List<Director> directors, List<Writer> writers, SqlConnection sqlConn)
         {
             DataTable directorTable = new DataTable("Directors");
             DataTable writerTable = new DataTable("Writers");
@@ -24,30 +24,34 @@ namespace ReaderInserterIMDB
             writerTable.Columns.Add("nconst", typeof(string));
             writerTable.Columns.Add("tconst", typeof(string));
 
-            foreach (DirectorWriter directorWriter in directorWriters)
-            {
-                foreach (string? director in directorWriter.Direcotors)
+            
+                if (director.Directors != null)
                 {
-                    DataRow directorRow = directorTable.NewRow();
-                    FillParameter(directorRow, "nconst", directorWriter.Direcotors);
-                    FillParameter(directorRow, "tconst", directorWriter.Tconst);
-                    directorTable.Rows.Add(directorRow);
+                    foreach (string? newDirector in ei.Directors)
+                    {
+                        DataRow directorRow = directorTable.NewRow();
+                        FillParameter(directorRow, "nconst", director.Directors);
+                        FillParameter(directorRow, "tconst", director.Tconst);
+                        directorTable.Rows.Add(directorRow);
+                    }
                 }
-                if (directorWriter.Writers != null)
+                if (writers.Writers != null)
                 {
-                    foreach (string? writer in directorWriter.Writers)
+                    foreach (string? writer in writers.Writers)
                     {
                         DataRow writerRow = writerTable.NewRow();
-                        FillParameter(writerRow, "nconst", directorWriter.Writers);
-                        FillParameter(writerRow, "tconst", directorWriter.Tconst);
+                        FillParameter(writerRow, "nconst", writer);
+                        FillParameter(writerRow, "tconst", writers.Tconst);
                         writerTable.Rows.Add(writerRow);
                     }
                 }
-                else
+            if (writers.Writers != null)
+            {
+                foreach (string? writer in writers.Writers)
                 {
                     DataRow writerRow = writerTable.NewRow();
-                    FillParameter(writerRow, "nconst", DBNull.Value);
-                    FillParameter(writerRow, "tconst", directorWriter.Tconst);
+                    FillParameter(writerRow, "nconst", writer);
+                    FillParameter(writerRow, "tconst", writers.Tconst);
                     writerTable.Rows.Add(writerRow);
                 }
             }
