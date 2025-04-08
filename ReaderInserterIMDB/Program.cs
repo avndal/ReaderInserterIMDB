@@ -142,6 +142,7 @@ SqlConnection sqlConn = new SqlConnection(ConnString);
 sqlConn.Open();
 
 TitleInserter titleInserter = new TitleInserter();
+GenreInserter genreInserter = new GenreInserter();
 /*foreach (List<Title> titles in titlesList)
 {
     Console.WriteLine($"Adds {titles.Count}, titles");
@@ -153,7 +154,7 @@ for (int i = 0; i < 115; i++)
     foreach (string line in
         System.IO.File.ReadLines
         (@"C:/temp/title.basics.tsv")
-        .Skip(1 + (i * 100000)).Take(100000))
+        .Skip(1 + (i * 10)).Take(10))
     {
         string[] values = line.Split("\t");
         if (values.Length == 9)
@@ -172,9 +173,11 @@ for (int i = 0; i < 115; i++)
     }
     Console.WriteLine($"Adds {titles.Count}, titles");
     titleInserter.Insert(titles, sqlConn);
+    Console.WriteLine("Adds, genres");
+    genreInserter.InsertGenres(sqlConn, titles);
 }
 
-PersonInserter? personInserter = new PersonInserter();
+/*PersonInserter? personInserter = new PersonInserter();
 for (int i = 0; i < 150; i++)
 {
     List<Person> persons = new List<Person>();
@@ -198,7 +201,7 @@ for (int i = 0; i < 150; i++)
     Console.WriteLine($"Adds {persons.Count}, people");
     
     personInserter.Insert(persons, sqlConn);
-}
+}*/
 
 /*Console.WriteLine($"Adds {persons.Count}, people");
 PersonInserter? personInserter = new PersonInserter();

@@ -12,7 +12,7 @@ namespace ReaderInserterIMDB
     {
         private SqlCommand sqlCommInsertGenre;
 
-        public void InsertGenres(SqlConnection sqlConn, List<Title> titleList, SqlTransaction myTrans)
+        public void InsertGenres(SqlConnection sqlConn, List<Title> titleList)
         {
 
             HashSet<string> genres = new HashSet<string>();
@@ -28,7 +28,7 @@ namespace ReaderInserterIMDB
             {
                 sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Genres] ([Name])" +
                     "OUTPUT INSERTED.ID " +
-                    "VALUES (@Name)", sqlConn, myTrans);
+                    "VALUES (@Name)", sqlConn);
 
                 sqlCommInsertGenre.Parameters.Add(CreateParameter("Name", SqlDbType.VarChar, 100));
                 sqlCommInsertGenre.Prepare();
@@ -49,7 +49,7 @@ namespace ReaderInserterIMDB
                 foreach (string genre in myTitle.genres)
                 {
                     sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Titles_Genres] ([Tconst], [GenreID])" +
-                    "VALUES ('" + myTitle.tconst + "', '" + genreDict[genre] + "')", sqlConn, myTrans);
+                    "VALUES ('" + myTitle.tconst + "', '" + genreDict[genre] + "')", sqlConn);
 
                     sqlCommInsertGenre.Parameters.Add(CreateParameter("Tconst", SqlDbType.VarChar, 10)); //Vi behøver måske ikke at tjekke for int
                     sqlCommInsertGenre.Parameters.Add(CreateParameter("GenreID", SqlDbType.Int));

@@ -13,11 +13,15 @@ namespace ReaderInserterIMDB
         private SqlCommand sqlCommInsertTitle;
 
         //public TitleInserter(SqlConnection sqlConn, SqlTransaction myTrans)
+        private SqlCommand sqlCommInsertGenre;
+
         public TitleInserter()
         {
         }
         public void Insert(List<Title> titles, SqlConnection sqlConn)
         {
+            Dictionary<string, int> genreDict = new Dictionary<string, int>();
+
             DataTable titleTable = new DataTable("Titles");
 
             titleTable.Columns.Add("tconst", typeof(string));
@@ -42,6 +46,7 @@ namespace ReaderInserterIMDB
                 FillParameter(titleRow, "runtimeMinutes", title.runtimeMinutes);
                 titleTable.Rows.Add(titleRow);
             }
+
             SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn,
                 SqlBulkCopyOptions.KeepNulls, null);
             bulkCopy.DestinationTableName = "Titles";
