@@ -9,10 +9,10 @@ using System.Runtime.CompilerServices;
 string ConnString = "server=localhost;Database=IMDB;" +
                "Integrated security=True;TrustServerCertificate=True";
 
-List<List<Title>> titlesList = new List<List<Title>>();
-List<Person> persons2 = new List<Person>();
-List<Director> directorList = new List<Director>();
-List<Writer> writerList = new List<Writer>();
+//List<List<Title>> titlesList = new List<List<Title>>();
+//List<Person> persons2 = new List<Person>();
+//List<Director> directorList = new List<Director>();
+//List<Writer> writerList = new List<Writer>();
 
 /*for (int i = 0; i < 115; i++)
 {
@@ -141,14 +141,41 @@ DateTime before = DateTime.Now;
 SqlConnection sqlConn = new SqlConnection(ConnString);
 sqlConn.Open();
 
-/*TitleInserter titleInserter = new TitleInserter();
-foreach (List<Title> titles in titlesList)
+TitleInserter titleInserter = new TitleInserter();
+/*foreach (List<Title> titles in titlesList)
 {
     Console.WriteLine($"Adds {titles.Count}, titles");
     titleInserter.Insert(titles, sqlConn);
 }*/
+for (int i = 0; i < 115; i++)
+{
+    List<Title> titles = new List<Title>();
+    foreach (string line in
+        System.IO.File.ReadLines
+        (@"C:/temp/title.basics.tsv")
+        .Skip(1 + (i * 100000)).Take(100000))
+    {
+        string[] values = line.Split("\t");
+        if (values.Length == 9)
+        {
+            /*string titleType = values[1];
+            SqlCommand sqlComm = new SqlCommand("EXEC [dbo].[TitleTypeGetInsertID] @NewTitleType = '"
+                        + titleType + "'");*/
 
-for (int i = 0; i < 490; i++)
+            titles.Add(new Title(
+                values[0], values[1], values[2], values[3],
+                ConvertToBool(values[4]), ConvertToInt(values[5]),
+                ConvertToInt(values[6]), ConvertToInt(values[7]),
+                values[8]
+                ));
+        }
+    }
+    Console.WriteLine($"Adds {titles.Count}, titles");
+    titleInserter.Insert(titles, sqlConn);
+}
+
+PersonInserter? personInserter = new PersonInserter();
+for (int i = 0; i < 150; i++)
 {
     List<Person> persons = new List<Person>();
     foreach (string line in
@@ -169,7 +196,7 @@ for (int i = 0; i < 490; i++)
         }
     }
     Console.WriteLine($"Adds {persons.Count}, people");
-    PersonInserter? personInserter = new PersonInserter();
+    
     personInserter.Insert(persons, sqlConn);
 }
 
@@ -180,9 +207,9 @@ personInserter.Insert(persons, sqlConn);
 Console.WriteLine($"Adds {persons2.Count}, people");
 personInserter.Insert(persons2, sqlConn);*/
 
-/*Console.WriteLine($"Adds {directorList.Count}, DirectorsWriters");
-DirectorWriterInserter directorWriterInserter = new DirectorWriterInserter();
-directorWriterInserter.Insert(directorList, writerList, sqlConn);*/
+            /*Console.WriteLine($"Adds {directorList.Count}, DirectorsWriters");
+            DirectorWriterInserter directorWriterInserter = new DirectorWriterInserter();
+            directorWriterInserter.Insert(directorList, writerList, sqlConn);*/
 
 sqlConn.Close();
 

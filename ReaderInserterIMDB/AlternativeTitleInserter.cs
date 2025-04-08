@@ -29,9 +29,21 @@ namespace ReaderInserterIMDB
             sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Type", SqlDbType.VarChar, 100));
             sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("IsOriginalTitle", SqlDbType.Bit));
             sqlCommInsertAlternativeTitle.Prepare();*/
+
         }
         public void Insert(AlternativeTitle alternativeTitle)
         {
+            DataTable titleTable = new DataTable("Titles");
+
+            titleTable.Columns.Add("tconst", typeof(string));
+            titleTable.Columns.Add("titleType", typeof(string));
+            titleTable.Columns.Add("primaryTitle", typeof(string));
+            titleTable.Columns.Add("originalTitle", typeof(string));
+            titleTable.Columns.Add("isAdult", typeof(bool));
+            titleTable.Columns.Add("startYear", typeof(int));
+            titleTable.Columns.Add("endYear", typeof(int));
+            titleTable.Columns.Add("runtimeMinutes", typeof(int));
+
             /*sqlCommInsertAlternativeTitle.Parameters["Tconst"].Value = alternativeTitle.Tconst;
             sqlCommInsertAlternativeTitle.Parameters["Ordering"].Value = CheckIntNull(alternativeTitle.Ordering);
             sqlCommInsertAlternativeTitle.Parameters["Title"].Value = alternativeTitle.Title;
