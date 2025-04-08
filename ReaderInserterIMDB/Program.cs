@@ -10,12 +10,11 @@ string ConnString = "server=localhost;Database=IMDB;" +
                "Integrated security=True;TrustServerCertificate=True";
 
 List<List<Title>> titlesList = new List<List<Title>>();
-List<Person> persons = new List<Person>();
 List<Person> persons2 = new List<Person>();
 List<Director> directorList = new List<Director>();
 List<Writer> writerList = new List<Writer>();
 
-for (int i = 0; i < 115; i++)
+/*for (int i = 0; i < 115; i++)
 {
     List<Title> titles = new List<Title>();
     foreach (string line in
@@ -28,7 +27,7 @@ for (int i = 0; i < 115; i++)
         {
             /*string titleType = values[1];
             SqlCommand sqlComm = new SqlCommand("EXEC [dbo].[TitleTypeGetInsertID] @NewTitleType = '"
-                        + titleType + "'");*/
+                        + titleType + "'");
 
             titles.Add(new Title(
                 values[0], values[1], values[2], values[3],
@@ -39,7 +38,8 @@ for (int i = 0; i < 115; i++)
         }
     }
     titlesList.Add(titles);
-}
+}*/
+/*
 List<Title> titlesRest = new List<Title>();
 foreach (string line in
         System.IO.File.ReadLines
@@ -51,7 +51,7 @@ foreach (string line in
     {
         /*string titleType = values[1];
         SqlCommand sqlComm = new SqlCommand("EXEC [dbo].[TitleTypeGetInsertID] @NewTitleType = '"
-                    + titleType + "'");*/
+                    + titleType + "'");
 
         titlesRest.Add(new Title(
             values[0], values[1], values[2], values[3],
@@ -62,6 +62,7 @@ foreach (string line in
     }
 }
 titlesList.Add(titlesRest);
+*/
 
 
 /*for (int i = 0; i < 490; i++)
@@ -140,13 +141,37 @@ DateTime before = DateTime.Now;
 SqlConnection sqlConn = new SqlConnection(ConnString);
 sqlConn.Open();
 
-TitleInserter titleInserter = new TitleInserter();
+/*TitleInserter titleInserter = new TitleInserter();
 foreach (List<Title> titles in titlesList)
 {
     Console.WriteLine($"Adds {titles.Count}, titles");
     titleInserter.Insert(titles, sqlConn);
-}
+}*/
 
+for (int i = 0; i < 490; i++)
+{
+    List<Person> persons = new List<Person>();
+    foreach (string line in
+    System.IO.File.ReadLines
+    (@"C:/temp/name.basics.tsv")
+    .Skip(1 + (100000 * i)).Take(100000))
+    {
+        string[] values = line.Split("\t");
+        if (values.Length == 6)
+        {
+            List<string> knownForTitles = new List<string>();
+            foreach (string knownFor in values[5].Split(","))
+            {
+                knownForTitles.Add(knownFor);
+            }
+            persons.Add(new Person(values[0], values[1], ConvertToInt(values[2]),
+                ConvertToInt(values[3]), knownForTitles));
+        }
+    }
+    Console.WriteLine($"Adds {persons.Count}, people");
+    PersonInserter? personInserter = new PersonInserter();
+    personInserter.Insert(persons, sqlConn);
+}
 
 /*Console.WriteLine($"Adds {persons.Count}, people");
 PersonInserter? personInserter = new PersonInserter();
