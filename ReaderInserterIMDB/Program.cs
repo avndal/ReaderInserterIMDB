@@ -255,14 +255,14 @@ personInserter.Insert(persons2, sqlConn);*/
 
 AlternativeTitleInserter altInserter = new AlternativeTitleInserter();
 
-//for (int i = 0; i < 5810; i++)
+//for (int i = 0; i < 5810*2; i++)
 for (int i = 0; i < 10; i++)
 {
     List<AlternativeTitle> altTitles = new List<AlternativeTitle>();
     foreach (string line in
     System.IO.File.ReadLines
     (@"C:/temp/title.akas.tsv")
-    .Skip(1 + (10000 * i)).Take(10000))
+    .Skip(1 + (5000 * i)).Take(5000))
     {
         string[] values = line.Split("\t");
         if (values.Length == 8)
