@@ -148,7 +148,7 @@ GenreInserter genreInserter = new GenreInserter();
     Console.WriteLine($"Adds {titles.Count}, titles");
     titleInserter.Insert(titles, sqlConn);
 }*/
-for (int i = 0; i < 115; i++)
+/*for (int i = 0; i < 115; i++)
 {
     List<Title> titles = new List<Title>();
     foreach (string line in
@@ -163,7 +163,7 @@ for (int i = 0; i < 115; i++)
             SqlCommand sqlComm = new SqlCommand("EXEC [dbo].[TitleTypeGetInsertID] @NewTitleType = '"
                         + titleType + "'");*/
 
-            titles.Add(new Title(
+            /*titles.Add(new Title(
                 values[0], values[1], values[2], values[3],
                 ConvertToBool(values[4]), ConvertToInt(values[5]),
                 ConvertToInt(values[6]), ConvertToInt(values[7]),
@@ -175,7 +175,7 @@ for (int i = 0; i < 115; i++)
     titleInserter.Insert(titles, sqlConn);
     //Console.WriteLine("Adds, genres");
     //genreInserter.InsertGenres(sqlConn, titles);
-}
+}*/
 
 /*PersonInserter? personInserter = new PersonInserter();
 for (int i = 0; i < 150; i++)
@@ -221,7 +221,7 @@ for (int i = 0; i < 581; i++)
     List<AlternativeTitle> altTitles = new List<AlternativeTitle>();
     foreach (string line in
     System.IO.File.ReadLines
-    (@"C:/temp/name.basics.tsv")
+    (@"C:/temp/title.akas.tsv")
     .Skip(1 + (100000 * i)).Take(100000))
     {
         string[] values = line.Split("\t");
