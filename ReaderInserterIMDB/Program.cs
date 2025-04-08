@@ -154,7 +154,7 @@ for (int i = 0; i < 115; i++)
     foreach (string line in
         System.IO.File.ReadLines
         (@"C:/temp/title.basics.tsv")
-        .Skip(1 + (i * 10)).Take(10))
+        .Skip(1 + (i * 100000)).Take(100000))
     {
         string[] values = line.Split("\t");
         if (values.Length == 9)
