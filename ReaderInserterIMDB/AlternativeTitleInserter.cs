@@ -14,45 +14,53 @@ namespace ReaderInserterIMDB
     {
         private SqlCommand sqlCommInsertAlternativeTitle;
 
-        public AlternativeTitleInserter(SqlConnection sqlConn, SqlTransaction myTrans)
+        public AlternativeTitleInserter()
         {
-            /*sqlCommInsertAlternativeTitle = new SqlCommand("INSERT INTO [dbo].[Alternative_Titles] ([Tconst], " +
-                "[Ordering], [Title], [Region], [Language], [Attributes], [Type], [IsOriginalTitle])" +
-            "VALUES (@Tconst,@Ordering,@Title,@Region,@Language,@Attributes,@Type,@IsOriginalTitle)", sqlConn, myTrans);
-
-            sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Tconst", SqlDbType.VarChar, 10));
-            sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Ordering", SqlDbType.Int));
-            sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Title", SqlDbType.VarChar, 100));
-            sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Region", SqlDbType.Char, 2));
-            sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Language", SqlDbType.Char, 2));
-            sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Attributes", SqlDbType.VarChar, 100));
-            sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("Type", SqlDbType.VarChar, 100));
-            sqlCommInsertAlternativeTitle.Parameters.Add(CreateParameter("IsOriginalTitle", SqlDbType.Bit));
-            sqlCommInsertAlternativeTitle.Prepare();*/
-
         }
-        public void Insert(AlternativeTitle alternativeTitle)
+        public void Insert(List<AlternativeTitle> alternativeTitle, SqlConnection sqlConn)
         {
-            DataTable titleTable = new DataTable("Titles");
+            DataTable titleTable = new DataTable("Alternative_Titles");
 
             titleTable.Columns.Add("tconst", typeof(string));
-            titleTable.Columns.Add("titleType", typeof(string));
-            titleTable.Columns.Add("primaryTitle", typeof(string));
-            titleTable.Columns.Add("originalTitle", typeof(string));
-            titleTable.Columns.Add("isAdult", typeof(bool));
-            titleTable.Columns.Add("startYear", typeof(int));
-            titleTable.Columns.Add("endYear", typeof(int));
-            titleTable.Columns.Add("runtimeMinutes", typeof(int));
+            titleTable.Columns.Add("ordering", typeof(int));
+            titleTable.Columns.Add("title", typeof(string));
+            titleTable.Columns.Add("region", typeof(string));
+            titleTable.Columns.Add("language", typeof(string));
+            titleTable.Columns.Add("attributes", typeof(string));
+            titleTable.Columns.Add("type", typeof(string));
+            titleTable.Columns.Add("isOriginalTitle", typeof(bool));
 
-            /*sqlCommInsertAlternativeTitle.Parameters["Tconst"].Value = alternativeTitle.Tconst;
-            sqlCommInsertAlternativeTitle.Parameters["Ordering"].Value = CheckIntNull(alternativeTitle.Ordering);
-            sqlCommInsertAlternativeTitle.Parameters["Title"].Value = alternativeTitle.Title;
-            sqlCommInsertAlternativeTitle.Parameters["Region"].Value = alternativeTitle.Region;
-            sqlCommInsertAlternativeTitle.Parameters["Language"].Value = alternativeTitle.Language;
-            sqlCommInsertAlternativeTitle.Parameters["Attributes"].Value = alternativeTitle.Attributes;
-            sqlCommInsertAlternativeTitle.Parameters["Type"].Value = alternativeTitle.Type;
-            sqlCommInsertAlternativeTitle.Parameters["IsOriginalTitle"].Value = CheckBoolNull(alternativeTitle.IsOriginalTitle);
-            sqlCommInsertAlternativeTitle.ExecuteNonQuery();*/
+            foreach (AlternativeTitle altTitle in alternativeTitle)
+            {
+                DataRow titleRow = titleTable.NewRow();
+                FillParameter(titleRow, "tconst", altTitle.Tconst);
+                FillParameter(titleRow, "ordering", altTitle.Ordering);
+                FillParameter(titleRow, "title", altTitle.Title);
+                FillParameter(titleRow, "region", altTitle.Region);
+                FillParameter(titleRow, "language", altTitle.Language);
+                FillParameter(titleRow, "attributes", altTitle.Attributes);
+                FillParameter(titleRow, "type", altTitle.Type);
+                FillParameter(titleRow, "isOriginalTitle", altTitle.IsOriginalTitle);
+                titleTable.Rows.Add(titleRow);
+            }
+            SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConn,
+                SqlBulkCopyOptions.KeepNulls, null);
+            bulkCopy.DestinationTableName = "Alternative_Titles";
+            bulkCopy.BulkCopyTimeout = 0;
+            bulkCopy.WriteToServer(titleTable);
+        }
+        public void FillParameter(DataRow row,
+            string columnName,
+            object? value)
+        {
+            if (value != null)
+            {
+                row[columnName] = value;
+            }
+            else
+            {
+                row[columnName] = DBNull.Value;
+            }
         }
         public static SqlParameter CreateParameter(string parameterName, SqlDbType type, int? size = null)
         {

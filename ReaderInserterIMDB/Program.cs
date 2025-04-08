@@ -171,10 +171,10 @@ for (int i = 0; i < 115; i++)
                 ));
         }
     }
-    Console.WriteLine($"Adds {titles.Count}, titles");
+    Console.WriteLine($"{i} / 115");
     titleInserter.Insert(titles, sqlConn);
-    Console.WriteLine("Adds, genres");
-    genreInserter.InsertGenres(sqlConn, titles);
+    //Console.WriteLine("Adds, genres");
+    //genreInserter.InsertGenres(sqlConn, titles);
 }
 
 /*PersonInserter? personInserter = new PersonInserter();
@@ -213,6 +213,29 @@ personInserter.Insert(persons2, sqlConn);*/
             /*Console.WriteLine($"Adds {directorList.Count}, DirectorsWriters");
             DirectorWriterInserter directorWriterInserter = new DirectorWriterInserter();
             directorWriterInserter.Insert(directorList, writerList, sqlConn);*/
+
+AlternativeTitleInserter altInserter = new AlternativeTitleInserter();
+
+for (int i = 0; i < 581; i++)
+{
+    List<AlternativeTitle> altTitles = new List<AlternativeTitle>();
+    foreach (string line in
+    System.IO.File.ReadLines
+    (@"C:/temp/name.basics.tsv")
+    .Skip(1 + (100000 * i)).Take(100000))
+    {
+        string[] values = line.Split("\t");
+        if (values.Length == 6)
+        {
+            List<string> knownForTitles = new List<string>();
+            altTitles.Add(new AlternativeTitle(values[0], int.Parse(values[1]), values[2], values[3], values[4],
+                values[5], values[6], ConvertToBool(values[7])));
+        }
+    }
+    Console.WriteLine($"{i} / 581");
+
+    altInserter.Insert(altTitles, sqlConn);
+}
 
 sqlConn.Close();
 
@@ -530,5 +553,4 @@ int? ConvertToInt(string input)
     {
         return int.Parse(input);
     }
-
 }
