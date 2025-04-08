@@ -16,7 +16,7 @@ namespace ReaderInserterIMDB
         }
         public void Insert(List<Director> directors, List<Writer> writers, SqlConnection sqlConn)
         {
-            DataTable directorTable = new DataTable("Directors");
+            /*DataTable directorTable = new DataTable("Directors");
             DataTable writerTable = new DataTable("Writers");
 
             directorTable.Columns.Add("nconst", typeof(string));
@@ -65,7 +65,7 @@ namespace ReaderInserterIMDB
                 SqlBulkCopyOptions.KeepNulls, null);
             writerBulk.DestinationTableName = "Writers";
             writerBulk.BulkCopyTimeout = 0;
-            writerBulk.WriteToServer(directorTable);
+            writerBulk.WriteToServer(directorTable);*/
         }
         public void FillParameter(DataRow row,
             string columnName,
