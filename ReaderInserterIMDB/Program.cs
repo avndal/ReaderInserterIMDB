@@ -64,7 +64,7 @@ foreach (string line in
 titlesList.Add(titlesRest);
 
 
-for (int i = 0; i < 490; i++)
+/*for (int i = 0; i < 490; i++)
 {
     foreach (string line in
     System.IO.File.ReadLines
@@ -83,9 +83,9 @@ for (int i = 0; i < 490; i++)
                 ConvertToInt(values[3]), knownForTitles));
         }
     }
-}
+}*/
 
-foreach (string line in
+/*foreach (string line in
     System.IO.File.ReadLines
     (@"C:/temp/name.basics.tsv")
     .Skip(1 + 490 * 100000))
@@ -101,7 +101,7 @@ foreach (string line in
         persons2.Add(new Person(values[0], values[1], ConvertToInt(values[2]),
             ConvertToInt(values[3]), knownForTitles));
     }
-}
+}*/
 
 /*foreach (string line in
     System.IO.File.ReadLines
@@ -148,12 +148,12 @@ foreach (List<Title> titles in titlesList)
 }
 
 
-Console.WriteLine($"Adds {persons.Count}, people");
+/*Console.WriteLine($"Adds {persons.Count}, people");
 PersonInserter? personInserter = new PersonInserter();
 personInserter.Insert(persons, sqlConn);
 
 Console.WriteLine($"Adds {persons2.Count}, people");
-personInserter.Insert(persons2, sqlConn);
+personInserter.Insert(persons2, sqlConn);*/
 
 /*Console.WriteLine($"Adds {directorList.Count}, DirectorsWriters");
 DirectorWriterInserter directorWriterInserter = new DirectorWriterInserter();
