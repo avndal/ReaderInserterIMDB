@@ -33,7 +33,7 @@ namespace ReaderInserterIMDB
                 sqlCommInsertGenre.Parameters.Add(CreateParameter("Professions", SqlDbType.VarChar, 100));
                 sqlCommInsertGenre.Prepare();
 
-                sqlCommInsertGenre.Parameters["Professions"].Value = profession;
+                sqlCommInsertGenre.Parameters["Professions"].Value = profession.Replace("'", "''");
                 sqlCommInsertGenre.ExecuteScalar();
 
                 SqlDataReader reader = sqlCommInsertGenre.ExecuteReader();

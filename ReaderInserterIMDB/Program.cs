@@ -30,7 +30,7 @@ for (int i = 0; i < 115; i++)
         if (values.Length == 9)
         {
             titles.Add(new Title(
-                values[0], values[1], values[2], values[3],
+                values[0].Replace("'", "''"), values[1].Replace("'", "''"), values[2].Replace("'", "''"), values[3].Replace("'", "''"),
                 ConvertToBool(values[4]), ConvertToInt(values[5]),
                 ConvertToInt(values[6]), ConvertToInt(values[7]),
                 values[8]
@@ -61,8 +61,8 @@ for (int i = 0; i < 150; i++)
             {
                 knownForTitles.Add(knownFor);
             }
-            persons.Add(new Person(values[0], values[1], ConvertToInt(values[2]),
-                ConvertToInt(values[3]), values[4], knownForTitles));
+            persons.Add(new Person(values[0].Replace("'", "''"), values[1].Replace("'", "''"), ConvertToInt(values[2]),
+                ConvertToInt(values[3]), values[4].Replace("'", "''"), knownForTitles));
         }
     }
     Console.WriteLine($"Adds {persons.Count}, people");
@@ -84,9 +84,9 @@ for (int i = 0; i < 115; i++)
         string[] values = line.Split("\t");
         if (values.Length == 3)
         {
-            writers.Add(new Writer(values[0], values[2]));
+            writers.Add(new Writer(values[0].Replace("'", "''"), values[2]));
 
-            directors.Add(new Director(values[0], values[1]));
+            directors.Add(new Director(values[0].Replace("'", "''"), values[1]));
         }
     }
     Console.WriteLine($"{i} / 581");

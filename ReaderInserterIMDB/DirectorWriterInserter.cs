@@ -30,7 +30,7 @@ namespace ReaderInserterIMDB
                 {
                     if (CheckNull(direct) != null) {
                         DataRow directorRow = directorTable.NewRow();
-                        FillParameter(directorRow, "nconst", direct);
+                        FillParameter(directorRow, "nconst", direct.Replace("'", "''"));
                         FillParameter(directorRow, "tconst", director.Tconst);
                         directorTable.Rows.Add(directorRow);
                     }
@@ -43,7 +43,7 @@ namespace ReaderInserterIMDB
                     if (CheckNull(write) != null)
                     {
                         DataRow writerRow = writerTable.NewRow();
-                        FillParameter(writerRow, "nconst", write);
+                        FillParameter(writerRow, "nconst", write.Replace("'", "''"));
                         FillParameter(writerRow, "tconst", writer.Tconst);
                         writerTable.Rows.Add(writerRow);
                     }
