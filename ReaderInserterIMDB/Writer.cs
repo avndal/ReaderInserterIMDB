@@ -11,10 +11,10 @@ namespace ReaderInserterIMDB
         public string Tconst { get; set; }
         public List<string> Writers { get; set; }
 
-        public Writer(string tconst, List<string> writers)
+        public Writer(string tconst, string writers)
         {
             Tconst = tconst;
-            Writers = writers;
+            Writers = writers.Split(",").ToList();
         }
     }
 }

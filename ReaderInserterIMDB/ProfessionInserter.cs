@@ -12,10 +12,10 @@ namespace ReaderInserterIMDB
     {
         private SqlCommand sqlCommInsertGenre;
 
-        public void Insert(SqlConnection sqlConn, List<Person> personList, SqlTransaction myTrans)
+        public void Insert(SqlConnection sqlConn, List<Person> personList)
         {
 
-            /* HashSet<string> professions = new HashSet<string>();
+            HashSet<string> professions = new HashSet<string>();
             Dictionary<string, int> professionDict = new Dictionary<string, int>();
             foreach (Person person in personList)
             {
@@ -28,7 +28,7 @@ namespace ReaderInserterIMDB
             {
                 sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Professions] ([Professions])" +
                     "OUTPUT INSERTED.ID " +
-                    "VALUES (@Professions)", sqlConn, myTrans);
+                    "VALUES (@Professions)", sqlConn);
 
                 sqlCommInsertGenre.Parameters.Add(CreateParameter("Professions", SqlDbType.VarChar, 100));
                 sqlCommInsertGenre.Prepare();
@@ -49,7 +49,7 @@ namespace ReaderInserterIMDB
                 foreach (string profession in myPerson.Professions)
                 {
                     sqlCommInsertGenre = new SqlCommand("INSERT INTO [dbo].[Persons_Professions] ([Nconst], [ProfessionID])" +
-                    "VALUES (@Nconst, @ProfessionID)", sqlConn, myTrans);
+                    "VALUES (@Nconst, @ProfessionID)", sqlConn);
 
                     sqlCommInsertGenre.Parameters.Add(CreateParameter("Nconst", SqlDbType.VarChar, 10));
                     sqlCommInsertGenre.Parameters.Add(CreateParameter("ProfessionID", SqlDbType.Int));
@@ -73,7 +73,7 @@ namespace ReaderInserterIMDB
             {
                 result = new SqlParameter(parameterName, type, (int)size);
             }
-            return result;*/
+            return result;
         }
     }
 }

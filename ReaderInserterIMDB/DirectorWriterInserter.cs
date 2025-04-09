@@ -12,11 +12,11 @@ namespace ReaderInserterIMDB
     {
         public DirectorWriterInserter()
         {
-            
+
         }
         public void Insert(List<Director> directors, List<Writer> writers, SqlConnection sqlConn)
         {
-            /*DataTable directorTable = new DataTable("Directors");
+            DataTable directorTable = new DataTable("Directors");
             DataTable writerTable = new DataTable("Writers");
 
             directorTable.Columns.Add("nconst", typeof(string));
@@ -24,35 +24,29 @@ namespace ReaderInserterIMDB
             writerTable.Columns.Add("nconst", typeof(string));
             writerTable.Columns.Add("tconst", typeof(string));
 
-            
-                if (director.Directors != null)
+            foreach (Director director in directors)
+            {
+                foreach (string direct in director.Directors)
                 {
-                    foreach (string? newDirector in ei.Directors)
-                    {
+                    if (CheckNull(direct) != null) {
                         DataRow directorRow = directorTable.NewRow();
-                        FillParameter(directorRow, "nconst", director.Directors);
+                        FillParameter(directorRow, "nconst", direct);
                         FillParameter(directorRow, "tconst", director.Tconst);
                         directorTable.Rows.Add(directorRow);
                     }
                 }
-                if (writers.Writers != null)
+            }
+            foreach (Writer writer in writers)
+            {
+                foreach (string write in writer.Writers)
                 {
-                    foreach (string? writer in writers.Writers)
+                    if (CheckNull(write) != null)
                     {
                         DataRow writerRow = writerTable.NewRow();
-                        FillParameter(writerRow, "nconst", writer);
-                        FillParameter(writerRow, "tconst", writers.Tconst);
+                        FillParameter(writerRow, "nconst", write);
+                        FillParameter(writerRow, "tconst", writer.Tconst);
                         writerTable.Rows.Add(writerRow);
                     }
-                }
-            if (writers.Writers != null)
-            {
-                foreach (string? writer in writers.Writers)
-                {
-                    DataRow writerRow = writerTable.NewRow();
-                    FillParameter(writerRow, "nconst", writer);
-                    FillParameter(writerRow, "tconst", writers.Tconst);
-                    writerTable.Rows.Add(writerRow);
                 }
             }
             SqlBulkCopy directorBulk = new SqlBulkCopy(sqlConn,
@@ -65,7 +59,7 @@ namespace ReaderInserterIMDB
                 SqlBulkCopyOptions.KeepNulls, null);
             writerBulk.DestinationTableName = "Writers";
             writerBulk.BulkCopyTimeout = 0;
-            writerBulk.WriteToServer(directorTable);*/
+            writerBulk.WriteToServer(directorTable);
         }
         public void FillParameter(DataRow row,
             string columnName,
@@ -79,6 +73,14 @@ namespace ReaderInserterIMDB
             {
                 row[columnName] = DBNull.Value;
             }
+        }
+        string? CheckNull(string input)
+        {
+            if (input.ToLower() == "\\n")
+            {
+                return null;
+            }
+            return input;
         }
     }
 }

@@ -11,10 +11,10 @@ namespace ReaderInserterIMDB
         public string Tconst { get; set; }
         public List<string> Directors { get; set; }
 
-        public Director(string tconst, List<string> directors)
+        public Director(string tconst, string directors)
         {
             Tconst = tconst;
-            Directors = directors;
+            Directors = directors.Split(",").ToList();
         }
     }
 }
